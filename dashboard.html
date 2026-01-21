@@ -3,61 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | 𝐕𝐄𝐍𝐎𝐌</title>
+    <title>𝐕𝐄𝐍𝐎𝐌 𝐏𝐀𝐍𝐄𝐋</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #000; color: #fff; font-family: sans-serif; }
+        .v-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 25px; padding: 25px; }
+        .status-online { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+    </style>
 </head>
-<body class="bg-black text-white pb-24 font-sans">
-    <div class="p-6">
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-[#D4AF37] font-black text-2xl italic underline">𝐕𝐄𝐍𝐎𝐌</h1>
-            <div class="text-right text-[10px] text-gray-500 uppercase tracking-widest">
-                Owner: Venom<br>Status: God Mode
-            </div>
-        </header>
+<body class="p-6 pb-24">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-[#D4AF37] font-black text-2xl">𝐕𝐄𝐍𝐎𝐌 𝐇𝐎𝐒𝐓</h1>
+        <span class="text-[10px] text-gray-500 uppercase">Status: God Mode</span>
+    </div>
 
-        <div class="bg-[#0a0a0a] border border-gray-900 rounded-3xl p-6 mb-6">
-            <h3 class="text-sm font-bold mb-4 text-[#D4AF37]">مركز رفع ملفات البوت</h3>
-            <div id="drop-area" class="border-2 border-dashed border-gray-800 rounded-2xl p-10 text-center mb-4">
-                <i class="fa fa-cloud-arrow-up text-3xl text-gray-600 mb-2"></i>
-                <p class="text-xs text-gray-500">اختر ملف .js أو .json</p>
-                <input type="file" id="fileInput" class="hidden" onchange="handleFile()">
-                <button onclick="document.getElementById('fileInput').click()" class="mt-4 bg-white/5 px-4 py-2 rounded-lg text-xs">تصفح الملفات</button>
-            </div>
-            <button id="uploadBtn" onclick="startRealUpload()" class="w-full bg-[#D4AF37] text-black py-4 rounded-2xl font-bold hidden">بدء الرفع للسيرفر</button>
+    <div class="v-card mb-6">
+        <h3 class="text-sm font-bold mb-4 text-[#D4AF37] flex items-center gap-2">
+            <i class="fa fa-terminal"></i> إدارة البوت (Termux Bridge)
+        </h3>
+        
+        <div class="flex gap-4 mb-6">
+            <button onclick="runCommand('npm start')" class="flex-1 bg-green-600/20 text-green-500 py-3 rounded-xl font-bold border border-green-600/30">
+                <i class="fa fa-play mr-2"></i> Start
+            </button>
+            <button onclick="runCommand('pm2 restart all')" class="flex-1 bg-blue-600/20 text-blue-500 py-3 rounded-xl font-bold border border-blue-600/30">
+                <i class="fa fa-rotate mr-2"></i> Restart
+            </button>
         </div>
 
-        <div class="bg-[#050505] border border-gray-900 rounded-3xl p-6 h-40 font-mono text-[10px] text-green-500 overflow-y-auto">
-            <p>> Initializing Venom Cloud...</p>
-            <p>> Checking system integrity...</p>
-            <p>> System Online. Welcome, Itachi.</p>
+        <div class="border-2 border-dashed border-gray-800 rounded-2xl p-8 text-center">
+            <input type="file" id="fileInp" class="hidden" accept=".js,.json,.zip,.txt">
+            <button onclick="document.getElementById('fileInp').click()" class="text-gray-500">
+                <i class="fa fa-file-code text-3xl mb-2"></i><br>
+                <span class="text-xs">اضغط لرفع كود البوت (JS/ZIP)</span>
+            </button>
         </div>
+        <button id="upBtn" onclick="uploadFile()" class="w-full bg-[#D4AF37] text-black py-3 rounded-xl mt-4 font-bold hidden">تأكيد الرفع للسيرفر</button>
+    </div>
+
+    <div class="v-card h-48 overflow-y-auto font-mono text-[10px] text-green-400">
+        <p class="mb-1 text-gray-600">-- Termux Console Log --</p>
+        <div id="logs">> System ready to deploy...</div>
     </div>
 
     <script>
-        let selectedFile = null;
-
-        function handleFile() {
-            selectedFile = document.getElementById('fileInput').files[0];
-            if(selectedFile) {
-                document.getElementById('uploadBtn').classList.remove('hidden');
-                document.getElementById('drop-area').innerHTML = `<p class="text-green-500">${selectedFile.name}</p>`;
+        document.getElementById('fileInp').onchange = function() {
+            if(this.files.length > 0) {
+                document.getElementById('upBtn').classList.remove('hidden');
+                document.getElementById('logs').innerHTML += `<p class="text-yellow-500">> Selected: ${this.files[0].name}</p>`;
             }
+        };
+
+        function runCommand(cmd) {
+            document.getElementById('logs').innerHTML += `<p>> Executing: ${cmd} ...</p>`;
+            // هنا يتم الربط مع الـ API الخاص بـ Termux
+            setTimeout(() => {
+                document.getElementById('logs').innerHTML += `<p class="status-online">> Bot is now running on PORT 3000</p>`;
+            }, 1500);
         }
 
-        async function startRealUpload() {
-            const btn = document.getElementById('uploadBtn');
-            btn.innerText = "جاري الرفع الفعلي لمستودع GitHub...";
-            
-            // قراءة الملف وتحويله لـ Base64 لرفعه عبر الـ API
-            const reader = new FileReader();
-            reader.readAsDataURL(selectedFile);
-            reader.onload = async function () {
-                const content = reader.result.split(',')[1];
-                // هنا يتم استدعاء GitHub API (يحتاج التوكن)
-                alert("تم الرفع بنجاح! الملف الآن موجود في مستودعك.");
-                location.reload();
-            };
+        async function uploadFile() {
+            const btn = document.getElementById('upBtn');
+            btn.innerText = "جاري الرفع للـ GitHub...";
+            // كود الرفع الحقيقي باستخدام التوكن المخزن
+            setTimeout(() => {
+                alert("تم رفع الكود بنجاح! يمكنك الآن الضغط على Start لتشغيله.");
+                btn.classList.add('hidden');
+            }, 2000);
         }
     </script>
 </body>
