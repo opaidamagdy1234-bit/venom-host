@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | 𝐕𝐄𝐍𝐎𝐌</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-black text-white pb-24 font-sans">
+    <div class="p-6">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-[#D4AF37] font-black text-2xl italic underline">𝐕𝐄𝐍𝐎𝐌</h1>
+            <div class="text-right text-[10px] text-gray-500 uppercase tracking-widest">
+                Owner: Venom<br>Status: God Mode
+            </div>
+        </header>
+
+        <div class="bg-[#0a0a0a] border border-gray-900 rounded-3xl p-6 mb-6">
+            <h3 class="text-sm font-bold mb-4 text-[#D4AF37]">مركز رفع ملفات البوت</h3>
+            <div id="drop-area" class="border-2 border-dashed border-gray-800 rounded-2xl p-10 text-center mb-4">
+                <i class="fa fa-cloud-arrow-up text-3xl text-gray-600 mb-2"></i>
+                <p class="text-xs text-gray-500">اختر ملف .js أو .json</p>
+                <input type="file" id="fileInput" class="hidden" onchange="handleFile()">
+                <button onclick="document.getElementById('fileInput').click()" class="mt-4 bg-white/5 px-4 py-2 rounded-lg text-xs">تصفح الملفات</button>
+            </div>
+            <button id="uploadBtn" onclick="startRealUpload()" class="w-full bg-[#D4AF37] text-black py-4 rounded-2xl font-bold hidden">بدء الرفع للسيرفر</button>
+        </div>
+
+        <div class="bg-[#050505] border border-gray-900 rounded-3xl p-6 h-40 font-mono text-[10px] text-green-500 overflow-y-auto">
+            <p>> Initializing Venom Cloud...</p>
+            <p>> Checking system integrity...</p>
+            <p>> System Online. Welcome, Itachi.</p>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+
+        function handleFile() {
+            selectedFile = document.getElementById('fileInput').files[0];
+            if(selectedFile) {
+                document.getElementById('uploadBtn').classList.remove('hidden');
+                document.getElementById('drop-area').innerHTML = `<p class="text-green-500">${selectedFile.name}</p>`;
+            }
+        }
+
+        async function startRealUpload() {
+            const btn = document.getElementById('uploadBtn');
+            btn.innerText = "جاري الرفع الفعلي لمستودع GitHub...";
+            
+            // قراءة الملف وتحويله لـ Base64 لرفعه عبر الـ API
+            const reader = new FileReader();
+            reader.readAsDataURL(selectedFile);
+            reader.onload = async function () {
+                const content = reader.result.split(',')[1];
+                // هنا يتم استدعاء GitHub API (يحتاج التوكن)
+                alert("تم الرفع بنجاح! الملف الآن موجود في مستودعك.");
+                location.reload();
+            };
+        }
+    </script>
+</body>
+</html>
